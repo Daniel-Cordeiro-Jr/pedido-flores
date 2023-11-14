@@ -1,14 +1,13 @@
 # Carrega as bibliotecas
 import streamlit as st
 import pandas as pd
-import openpyxl 
 
 # Carrega a imagem do logo
 st.image('logo.jpeg')
 
 # Carrega a tabela com Mercadorias e Quantidades a serem trabalhadas
-#dftab = pd.read_excel('mercadoria.xlsx', sheet_name = 'pedido')
-dftab = pd.read_excel('mercadoria.xlsx',sheet_name = 'pedido', engine='openpyxl')
+dftab = pd.read_excel('mercadoria.xlsx', sheet_name = 'pedido')
+#dftab = pd.read_excel('mercadoria.xlsx',sheet_name = 'pedido', engine='openpyxl')
 
 # Formata os campos da tabela de dados
 dftab = dftab.astype({
