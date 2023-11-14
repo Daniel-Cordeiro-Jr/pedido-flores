@@ -33,7 +33,7 @@ selecoes = []
 
 # Criar um loop for para iterar sobre os produtos e as quantidades
 for cod_prod, produto, q0, q1, q2, q3, q4 in zip(dftab['cod_produto'],dftab['desc_produto'], dftab['qtd0'], dftab['quantidade1'], dftab['quantidade2'], dftab['quantidade3'], dftab['quantidade4']):
-    selecao = st.selectbox(f'Selecione a quantidade desejada de **{produto}**:', [q0, q1, q2, q3, q4], key=cod_prod)
+    selecao = st.selectbox(f'Selecione a quantidade desejada de ****{produto}****:', [q0, q1, q2, q3, q4], key=cod_prod)
     selecoes.append(selecao)
     
     # Exibir a lista de seleções
