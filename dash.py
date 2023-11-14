@@ -32,23 +32,15 @@ st.markdown(f"\t<h3 style='text-align: center; color: black;'>Guia de Pedidos</h
 # Criar uma lista vazia para armazenar as seleções
 selecoes = []
 
-# Criar um loop for para iterar sobre os produtos e as quantidades
-#for produto, quantidade in zip(df['Produto'], df['Quantidade']):
-    # Criar uma caixa de seleção com as opções de quantidade para cada produto
-    #selecao = st.selectbox(f'Selecione a quantidade desejada para {produto}:', [1, 2, 3], key=produto)
-    # Adicionar a seleção à lista
-    #selecoes.append(selecao)
 
+
+# Criar um loop for para iterar sobre os produtos e as quantidades
 for cod_prod, produto, q0, q1, q2, q3, q4 in zip(dftab['cod_produto'],dftab['desc_produto'], dftab['qtd0'], dftab['quantidade1'], dftab['quantidade2'], dftab['quantidade3'], dftab['quantidade4']):
-    selecao = st.selectbox(f'Selecione a quantidade desejada para **{produto}**:', [q0, q1, q2, q3, q4], key=cod_prod)
+    selecao = st.selectbox(f'Selecione a quantidade desejada de **{produto}**:', [q0, q1, q2, q3, q4], key=cod_prod)
     selecoes.append(selecao)
     
     # Exibir a lista de seleções
     soma = sum(int(i) for i in selecoes)
-
-  #   st.write(f'Valor: {selecao} itens')
-  #  if selecao == 0:
-  #     df_final = dftab[['cod_produto', 'desc_produto', 'produto']]
     
 dftab['pedido'] = selecoes
 
