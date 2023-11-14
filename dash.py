@@ -1,11 +1,7 @@
 # Carrega as bibliotecas
 import streamlit as st
-import yfinance as yf
 import pandas as pd
-from prophet import Prophet
-from prophet.plot import plot_plotly
-from plotly import graph_objs as go
-from datetime import date
+
 
 # Carrega a imagem do logo
 st.image('logo.jpeg')
