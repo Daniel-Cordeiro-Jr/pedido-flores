@@ -1,7 +1,5 @@
 # Carrega as bibliotecas
 import streamlit as st
-!pip stall pandas
-
 import pandas as pd
 
 
