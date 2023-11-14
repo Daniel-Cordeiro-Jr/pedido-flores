@@ -6,7 +6,7 @@ import pandas as pd
 st.image('logo.jpeg')
 
 # Carrega a tabela com Mercadorias e Quantidades a serem trabalhadas
-dftab = pd.read_excel('mercadoria.xlsx', sheet_name = 'pedido')
+dftab = pd.read_excel('mercadoria.xlsx', header = 0, sheet_name = 'pedido')
 
 # Formata os campos da tabela de dados
 dftab = dftab.astype({
