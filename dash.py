@@ -1,7 +1,7 @@
 # Carrega as bibliotecas
 import streamlit as st
 import pandas as pd
-
+import openpyxl 
 
 # Carrega a imagem do logo
 st.image('logo.jpeg')
