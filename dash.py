@@ -7,7 +7,6 @@ st.image('logo.jpeg')
 
 # Carrega a tabela com Mercadorias e Quantidades a serem trabalhadas
 dftab = pd.read_excel('mercadoria.xlsx', sheet_name = 'pedido')
-#dftab = pd.read_excel('mercadoria.xlsx',sheet_name = 'pedido', engine='openpyxl')
 
 # Formata os campos da tabela de dados
 dftab = dftab.astype({
@@ -26,8 +25,6 @@ st.dataframe(df_ini, hide_index=True)
 
 st.markdown(f"\t<h3 style='text-align: center; color: black;'>Guia de Pedidos</h3>", unsafe_allow_html=True)
 
-# Duplica a tabela de dados
-#df_tratado = dftab.loc[:,].copy()
 
 # Criar uma lista vazia para armazenar as seleções
 selecoes = []
