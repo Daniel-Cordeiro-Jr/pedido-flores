@@ -7,7 +7,6 @@ st.image('logo.jpeg')
 st.markdown(f"\n")
 
 # Carrega a tabela com Mercadorias e Quantidades a serem trabalhadas
-#dftab = pd.read_excel('mercadoria.xlsx', header = 0, sheet_name = 'pedido')
 dftab = pd.read_excel(f'mercadoria.xlsx')
 
 # Formata os campos da tabela de dados
@@ -15,31 +14,58 @@ dftab = dftab.astype({'cod_produto': 'str', 'desc_produto': 'str',
                       'quantidade1': 'str', 'quantidade2': 'str',
                       'quantidade3': 'str', 'quantidade4': 'str', 'pedido': 'str'
 })
+lista_campos=['cod_produto','desc_produto','pedido']
 
-st.dataframe(dftab, hide_index=True)
+campos=['cod_produto','desc_produto','quantidade1','quantidade2','quantidade3','quantidade4']
+
+# Mostra a tabela mãe para apoio da seleção de quantidades
+st.dataframe(dftab[campos], hide_index=True)
+
+# Funcão para retornar as quantidades de cada produto no selectbox
+def get_quantidades(produto):
+    # Selecionar as colunas de quantidade e converter para uma lista
+    quantidades = df_produto[['quantidade1', 'quantidade2', 'quantidade3', 'quantidade4']].values.tolist()[0]
+    return quantidades
 
 st.markdown(f"\n")
 st.markdown(f"<h3 style='text-align: center; color: black;'>Guia de Pedidos</h3>", unsafe_allow_html=True)
 
+# Selecionar o produto desejado
+selecao_prod=st.selectbox(f'****Produtos Disponíveis:****',dftab['desc_produto'],
+                                                         placeholder="Selecione o produto...",
+                                                         index=True
+                                                        )
+# Cria um dataframe filtrando o produto selecionado
+df_produto = dftab.loc[dftab['desc_produto'] == selecao_prod]
 
-# Criar uma lista vazia para armazenar as seleções
-selecoes = []
-# Criar um loop for para iterar sobre os produtos e as quantidades
-for cod_prod, produto, q1, q2, q3, q4 in zip(dftab['cod_produto'],dftab['desc_produto'], 
-                                                 dftab['quantidade1'], dftab['quantidade2'], 
-                                                 dftab['quantidade3'], dftab['quantidade4']):
-    selecao = st.selectbox(f'Selecione a quantidade desejada de ****{produto}****:',[0,q1, q2, q3, q4], key=cod_prod)
-    selecoes.append(selecao)
-    
-    # Exibir a lista de seleções
-    soma = sum(int(i) for i in selecoes)
-    
-dftab['pedido'] = selecoes
+# Selecionar as quantidades desejadas
+selecao_qtd=st.selectbox(f'****Quantidades Disponíveis:****', [*get_quantidades(selecao_prod)],
+                                                         placeholder="Selecione a quantidade...",
+                                                         index=True
+                                                         )
+# Extrai o codigo do produto
+codproduto = df_produto.loc[df_produto['desc_produto'] == selecao_prod, 'cod_produto'].values[0]
+
+# Insere o valor selecionado no datafreme
+dftab.loc[dftab['cod_produto'] == codproduto, 'pedido'] = selecao_qtd
+
+
+# Exibir somantório de quantidades
+if dftab[dftab['pedido'].notnull()].empty == False:
+    soma = pd.to_numeric(dftab['pedido'], errors='coerce').sum()
 
 st.markdown(f"\n")
 st.markdown(f"\t<h3 style='text-align: center; color: black;'>Pedido</h3>", unsafe_allow_html=True)
-df_final = dftab[['cod_produto', 'desc_produto', 'pedido']]
-df_final = df_final[(dftab['pedido'] != 0)]
-st.dataframe(df_final, hide_index=True)
+df_final = dftab[(dftab['pedido'] != "nan")]
 
-st.write(f'Seu pedido tem um total de: {soma} itens')
+# Cria botão enviar Pedido(em construção)
+if st.button("Enviar Pedido"):
+    df_final = None
+st.dataframe(df_final[lista_campos], hide_index=True)
+st.write(f'Seu pedido tem um total de: {int(soma.round(0))} itens')
+# Cria botão para limpar Pedido(em construção)
+if st.button("Limpar"):
+    df_final = None
+
+
+

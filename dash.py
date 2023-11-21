@@ -16,7 +16,7 @@ dftab = dftab.astype({'cod_produto': 'str', 'desc_produto': 'str',
                       'quantidade3': 'str', 'quantidade4': 'str', 'pedido': 'str'
 })
 
-st.dataframe(dftab, hide_index=True)
+#st.dataframe(dftab, hide_index=True)
 
 st.markdown(f"\n")
 st.markdown(f"<h3 style='text-align: center; color: black;'>Guia de Pedidos</h3>", unsafe_allow_html=True)
@@ -34,6 +34,7 @@ for cod_prod, produto, q1, q2, q3, q4 in zip(dftab['cod_produto'],dftab['desc_pr
     # Exibir a lista de seleções
     soma = sum(int(i) for i in selecoes)
     
+
 dftab['pedido'] = selecoes
 
 st.markdown(f"\n")
