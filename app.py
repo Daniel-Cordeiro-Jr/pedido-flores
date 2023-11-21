@@ -59,13 +59,13 @@ st.markdown(f"\t<h3 style='text-align: center; color: black;'>Pedido</h3>", unsa
 df_final = dftab[(dftab['pedido'] != "nan")]
 
 # Cria botão enviar Pedido(em construção)
-if st.button("Enviar Pedido"):
-    df_final = None
+#if st.button("Enviar Pedido"):
+#    df_final = None
 st.dataframe(df_final[lista_campos], hide_index=True)
 st.write(f'Seu pedido tem um total de: {int(soma.round(0))} itens')
 # Cria botão para limpar Pedido(em construção)
-if st.button("Limpar"):
-    df_final = None
+#if st.button("Limpar"):
+#    df_final = None
 
 
 
