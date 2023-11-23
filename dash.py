@@ -15,8 +15,9 @@ dftab = dftab.astype({'cod_produto': 'str', 'desc_produto': 'str',
                       'quantidade1': 'str', 'quantidade2': 'str',
                       'quantidade3': 'str', 'quantidade4': 'str', 'pedido': 'str'
 })
+campos=['cod_produto','desc_produto','quantidade1','quantidade2','quantidade3','quantidade4']
 
-#st.dataframe(dftab, hide_index=True)
+st.dataframe(dftab[campos], hide_index=True)
 
 st.markdown(f"\n")
 st.markdown(f"<h3 style='text-align: center; color: black;'>Guia de Pedidos</h3>", unsafe_allow_html=True)
