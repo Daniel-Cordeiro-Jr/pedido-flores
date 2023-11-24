@@ -9,6 +9,7 @@ st.markdown(f"\n")
 # Carrega a tabela com Mercadorias e Quantidades a serem trabalhadas
 dftab = pd.read_excel(f'mercadoria.xlsx')
 original_df=dftab.copy()
+
 # Formata os campos da tabela de dados
 dftab = dftab.astype({'cod_produto': 'str', 'desc_produto': 'str',
                       'quantidade1': 'str', 'quantidade2': 'str',
@@ -29,6 +30,7 @@ def get_quantidades(produto):
     quantidades = dftab[['quantidade1', 'quantidade2', 'quantidade3', 'quantidade4']].values.tolist()[0]
     return quantidades
 
+# Funcão para atualizar dados no Dataframe
 def atualiza_dftab(produto,quantidade):
     # Extrai o codigo do produto
     codproduto = dftab.loc[dftab['desc_produto'] == selecao_prod, 'cod_produto'].values[0]
@@ -42,16 +44,16 @@ st.markdown(f"<h3 style='text-align: center; color: black;'>Guia de Pedidos</h3>
 
 # Selecionar o produto desejado
 selecao_prod=st.selectbox(f'****Produtos Disponíveis:****',dftab['desc_produto'],
-                                                         placeholder="Selecione o produto...")
+                                                         placeholder="Selecione o produto...",index=None)
 
-selecao_ant=selecao_prod
 # Selecionar as quantidades desejadas
 selecao_qtd=st.selectbox(f'****Quantidades Disponíveis:****', [*get_quantidades(selecao_prod)],
-                                                            placeholder="Selecione a quantidade...")
-# Insere o valor selecionado no datafreme
+                                                            placeholder="Selecione a quantidade...",index=None)
+
+# Chama função que insere os valores selecionados no datafreme
 atualiza_dftab(selecao_prod,selecao_qtd)
 
-# Exibir somantório de quantidades
+# Somantório de quantidades
 soma = pd.to_numeric(dfpedido['pedido'], errors='coerce').sum()
 
 st.markdown(f"\n")
