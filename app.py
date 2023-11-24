@@ -16,7 +16,7 @@ dftab = dftab.astype({'cod_produto': 'str', 'desc_produto': 'str',
                       'quantidade3': 'str', 'quantidade4': 'str', 'pedido': 'str'
 })
 colunas=['cod_produto','desc_produto','quantidade1','quantidade2','quantidade3','quantidade4']
-
+msg_produto="Selecione o produto..."
 # Cria dataframe de pedidos
 colunapedido=['cod_produto','desc_produto','pedido']
 dfpedido = pd.DataFrame(columns=colunapedido)
@@ -41,17 +41,22 @@ def atualiza_dftab(produto,quantidade):
 
 st.markdown(f"\n")
 st.markdown(f"<h3 style='text-align: center; color: black;'>Guia de Pedidos</h3>", unsafe_allow_html=True)
-
 # Selecionar o produto desejado
 selecao_prod=st.selectbox(f'****Produtos Disponíveis:****',dftab['desc_produto'],
-                                                         placeholder="Selecione o produto...",index=None)
-
+                                                         placeholder=msg_produto,
+                                                         index=None)
 # Selecionar as quantidades desejadas
 selecao_qtd=st.selectbox(f'****Quantidades Disponíveis:****', [*get_quantidades(selecao_prod)],
-                                                            placeholder="Selecione a quantidade...",index=None)
+                                                            placeholder="Selecione a quantidade...",
+                                                            index=None)
 
 # Chama função que insere os valores selecionados no datafreme
-atualiza_dftab(selecao_prod,selecao_qtd)
+if selecao_prod is not None:
+    atualiza_dftab(selecao_prod,selecao_qtd)
+
+
+
+
 
 # Somantório de quantidades
 soma = pd.to_numeric(dfpedido['pedido'], errors='coerce').sum()
