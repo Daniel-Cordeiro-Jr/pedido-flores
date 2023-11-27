@@ -14,11 +14,13 @@ dftab = dftab.astype({'cod_produto': 'str', 'desc_produto': 'str',
                       'minimo': 'str', 'qtd2': 'str',
                       'qtd3': 'str', 'qtd4': 'str', 'pedido': 'str'
 })
+
 def get_quantidades(codigo):
     # Selecionar as colunas de quantidade e converter para uma lista
     if codigo:
         quantidades = None
         quantidades = dftab.loc[dftab['cod_produto'] == codigo, ['minimo','qtd2','qtd3','qtd4']].values[0]
+        #quantidades = dftab[['quantidade1', 'quantidade2', 'quantidade3', 'quantidade4']].values.tolist()[0]
         return quantidades
 
 if 'num' not in st.session_state:
