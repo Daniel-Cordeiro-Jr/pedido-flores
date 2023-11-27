@@ -69,6 +69,8 @@ def main():
                    st.session_state.num += 1
                    placeholder.empty()
                    placeholder2.empty()
+                elif st.form_submit_button('Adicionar'):
+                   dfpedido = dfpedido.query('Codigo == new_produto.codproduto and Produto == "new_produto.produto"')
                else:
                    st.stop()
 main()
