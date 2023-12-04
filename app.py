@@ -32,7 +32,6 @@ if 'num' not in st.session_state:
     st.session_state.num = 0
 if 'data' not in st.session_state:
     st.session_state.data = []
-
 class NovoPedido:
     def __init__(self, page_id):
         idx_produto = page_id
