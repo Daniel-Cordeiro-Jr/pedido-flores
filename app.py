@@ -6,7 +6,7 @@ st.image('logo.jpeg')
 st.markdown(f"\n")
 
 # Carrega a tabela com Mercadorias e Quantidades a serem trabalhadas
-dftab = pd.read_excel(f'C:\Projetos_Phayton\Primeiro_Dashboard\mercadoria.xlsx')
+dftab = pd.read_excel(f'mercadoria.xlsx')
 
 dftab.index = pd.RangeIndex(start=1, stop=len(dftab) + 1)
 
@@ -25,8 +25,8 @@ def get_quantidades(codigo):
         quantidades = dftab.loc[dftab['cod_produto'] == codigo, ['minimo','qtd2','qtd3','qtd4']].values[0]
         return quantidades
 
-def exporta_pedido(dfpedido):
-    dfpedido.to_csv("pedido_loja.csv", index=False, header=False)
+#def exporta_pedido(dfpedido):
+#    dfpedido.to_csv("pedido_loja.csv", index=False, header=False)
 
 if 'num' not in st.session_state:
     st.session_state.num = 0
