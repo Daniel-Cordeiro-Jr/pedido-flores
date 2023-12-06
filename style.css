@@ -1,13 +1,28 @@
-
 .stButton > button:first-child {
-    background-color: #486b48;
+    background-color: #031d03;
     color: #ffffff;
     border-color: rgb(247, 242, 242)
 }
 
+/* Cor do texto para tela principal */
+.appview-container{
+    background-color: #298E29;
+}
+/* Cor do texto para tela principal */
+.st-emotion-cache-v3hh4s{
+    background-color: #298E29;
+}
+
+/* Cor do texto para tela de seleção do item */
+.st-dp {
+    background-color: #c9f1c9;
+    height: 6px;
+    width: 6px;
+}
+
 .st-emotion-cache-ue6h4q {
     font-size: 130px;
-    color: rgb(13, 14, 13);
+    color: rgb(236, 241, 236);
     display: flex;
     margin-bottom: 0,5rem;
     height: auto;
@@ -16,11 +31,6 @@
     flex-direction: row;
     -webkit-box-align: center;
     align-items: center;
-}
-
-#MainMenu {
-    visibility: hidden;
-
 }
 
 block-container{
