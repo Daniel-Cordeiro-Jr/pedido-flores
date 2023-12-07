@@ -1,5 +1,9 @@
 import streamlit as st
 import pandas as pd
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 
 
 # Carregar o arquivo style.css
@@ -27,8 +31,9 @@ def get_quantidades(codigo):
         quantidades = dftab.loc[dftab['cod_produto'] == codigo, ['minimo','qtd2','qtd3','qtd4']].values[0]
         return quantidades
 
-#def exporta_pedido(dfpedido):
-#    dfpedido.to_csv("pedido_loja.csv", index=False, header=False)
+def exporta_pedido(dfpedido):
+    dfpedido.to_csv("pedido_loja.csv", index=False, header=False)
+
 
 if 'num' not in st.session_state:
     st.session_state.num = 0
@@ -62,7 +67,7 @@ def main():
             dfpedido = pd.DataFrame(st.session_state.data)
             dfpedido = dfpedido.drop_duplicates(subset='Produto').reset_index(drop=True)
             st.dataframe(dfpedido, hide_index=True)
-            #exporta_pedido(dfpedido) 
+            exporta_pedido(dfpedido) 
             st.session_state.num = 1
             st.session_state.data = []         
             break
