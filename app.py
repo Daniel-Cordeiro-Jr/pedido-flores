@@ -1,10 +1,5 @@
 import streamlit as st
 import pandas as pd
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.application import MIMEApplication
-
 
 # Carregar o arquivo style.css
 with open ("style.css") as f:
