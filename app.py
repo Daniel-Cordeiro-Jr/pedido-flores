@@ -27,7 +27,7 @@ def get_quantidades(codigo):
         return quantidades
 
 def exporta_pedido(dfpedido):
-    dfpedido.to_csv("~/.streamlit/data/pedido_loja.csv", index=False, header=False)
+    dfpedido.to_csv("pedido_loja.csv", index=False, header=False)
 
 
 if 'num' not in st.session_state:
