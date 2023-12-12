@@ -3,6 +3,8 @@ import pandas as pd
 from openpyxl import load_workbook
 import sqlalchemy as sa
 import datetime as dt
+import psycopg2 as pg
+
 
 # Carregar o arquivo style.css
 with open ("style.css") as f:
@@ -44,9 +46,9 @@ def config_db():
 
 def exporta_pedido(dfpedido):
     # Cria uma conexão com o banco de dados PostgreSQL
-    strdb = config_db()
-    #engine = sa.create_engine('postgresql://giygdfhjyrwsdq:f4d9c1d659860884bcb677f89ad33155a3e68e5fac95eb1b3054fc2308ef5389@ec2-18-213-255-35.compute-1.amazonaws.com:5432/d4vnafvevfvp4s')
-    engine = sa.create_engine(strdb)
+    #strdb = config_db()
+    engine = sa.create_engine('postgresql://giygdfhjyrwsdq:f4d9c1d659860884bcb677f89ad33155a3e68e5fac95eb1b3054fc2308ef5389@ec2-18-213-255-35.compute-1.amazonaws.com:5432/d4vnafvevfvp4s')
+    #engine = sa.create_engine(strdb)
     # Faz a inserção dos dados no banco de dados PostgreSQL
     dfpedido.to_sql('tb_pedidos', con=engine, if_exists='append', index=False)
 
@@ -81,6 +83,8 @@ def main(loja):
             placeholder2.empty()
             dfpedido = pd.DataFrame(st.session_state.data)
             dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+            st.markdown(f"\n")
+            st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
             st.dataframe(dfpedido, hide_index=True)
             exporta_pedido(dfpedido) 
             st.session_state.num = 1
@@ -93,17 +97,19 @@ def main(loja):
                if st.form_submit_button('***Adicionar***'):
                     if vl_quantidade != "":
                         nun_loja = dftabloja.loc[dftabloja['loja'] == loja, 'numero'].values[0]
-                        data=dt.datetime.now().strftime("%Y-%m-%d")
+                        data_pedido=dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         st.session_state.data.append({
                         'nun_loja': nun_loja,
                         'desc_loja': loja,
-                        'data': data,
+                        'dt_pedido': data_pedido,
                         'cod_produto': novo_produto.codigo,
                         'desc_produto': novo_produto.produto,
                         'quantidade': vl_quantidade
                         })
                         dfpedido = pd.DataFrame(st.session_state.data)
                         dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                        st.markdown(f"\n")
+                        st.markdown(f"\t<h5 style='text-align: center; color: with;'># Itens Selecionados #</h5>", unsafe_allow_html=True)
                         st.dataframe(dfpedido, hide_index=True)
                         st.session_state.num += 1
                     elif vl_quantidade == "":
@@ -114,7 +120,6 @@ def main(loja):
                else:
                    st.stop()
                    
-# Selecionar a Loja
 def selecionaloja():
 #Selecionar a Loja 
     mensagem = "Selecione a Loja..."
