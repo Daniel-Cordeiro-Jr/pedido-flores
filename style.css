@@ -13,13 +13,6 @@
     background-color: #298E29;
 }
 
-/* Cor do texto para tela de seleção do item */
-.st-dp {
-    background-color: #c9f1c9;
-    height: 6px;
-    width: 6px;
-}
-
 .st-emotion-cache-ue6h4q {
     font-size: 130px;
     color: rgb(236, 241, 236);
@@ -32,3 +25,6 @@
     -webkit-box-align: center;
     align-items: center;
 }
+
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
