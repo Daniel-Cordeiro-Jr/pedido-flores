@@ -4,7 +4,8 @@ from openpyxl import load_workbook
 import sqlalchemy as sa
 import datetime as dt
 import psycopg2 as pg
-
+import datetime as dt
+from datetime import datetime
 
 # Carregar o arquivo style.css
 with open ("style.css") as f:
@@ -84,8 +85,21 @@ def main(loja):
             dfpedido = pd.DataFrame(st.session_state.data)
             dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
             st.markdown(f"\n")
-            st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
-            st.dataframe(dfpedido, hide_index=True)
+            data_atual=(datetime.today().weekday())
+            if data_atual == 0:
+                entrega=dt.datetime.now() + dt.timedelta(days=4)
+                st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
+                st.markdown(f"\t<h5 style='text-align: center; color: with;'># Data de entrega prevista para {entrega} #</h5>", unsafe_allow_html=True)
+                st.dataframe(dfpedido, hide_index=True)
+            elif data_atual > 0 and data_atual < 3:
+                # Calcular a data da próxima quarta-feira
+                dias_ate_quarta = ((2 - data_atual + 7) % 7) + 7
+                data_atual = dt.datetime.now()
+                proxima_quarta = (data_atual + dt.timedelta(days=dias_ate_quarta)).strftime('%d/%m/%Y')
+                st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
+                st.markdown(f"\t<h6 style='text-align: center; color: with;'># Entrega prevista para - {proxima_quarta} #</h6>", unsafe_allow_html=True)
+                st.dataframe(dfpedido, hide_index=True)
+
             exporta_pedido(dfpedido) 
             st.session_state.num = 1
             st.session_state.data = []         
@@ -108,7 +122,7 @@ def main(loja):
                         })
                         dfpedido = pd.DataFrame(st.session_state.data)
                         dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
-                        st.markdown(f"\n")
+                        st.markdown(f"\n")                     
                         st.markdown(f"\t<h5 style='text-align: center; color: with;'># Itens Selecionados #</h5>", unsafe_allow_html=True)
                         st.dataframe(dfpedido, hide_index=True)
                         st.session_state.num += 1
