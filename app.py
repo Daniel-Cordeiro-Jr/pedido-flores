@@ -90,7 +90,8 @@ def main(loja):
                 entrega=dt.datetime.now() + dt.timedelta(days=4)
                 st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
                 st.markdown(f"\t<h5 style='text-align: center; color: with;'># Data de entrega prevista para {entrega} #</h5>", unsafe_allow_html=True)
-                st.dataframe(dfpedido, hide_index=True)
+                df_selecionado = dfpedido[['desc_produto', 'quantidade']]
+                st.dataframe(df_selecionado, hide_index=True)
             elif data_atual > 0 and data_atual < 3:
                 # Calcular a data da próxima quarta-feira
                 dias_ate_quarta = ((2 - data_atual + 7) % 7) + 7
@@ -98,7 +99,8 @@ def main(loja):
                 proxima_quarta = (data_atual + dt.timedelta(days=dias_ate_quarta)).strftime('%d/%m/%Y')
                 st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
                 st.markdown(f"\t<h6 style='text-align: center; color: with;'># Entrega prevista para - {proxima_quarta} #</h6>", unsafe_allow_html=True)
-                st.dataframe(dfpedido, hide_index=True)
+                df_selecionado = dfpedido[['desc_produto', 'quantidade']]
+                st.dataframe(df_selecionado, hide_index=True)
 
             exporta_pedido(dfpedido) 
             st.session_state.num = 1
@@ -124,12 +126,14 @@ def main(loja):
                         dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
                         st.markdown(f"\n")                     
                         st.markdown(f"\t<h5 style='text-align: center; color: with;'># Itens Selecionados #</h5>", unsafe_allow_html=True)
-                        st.dataframe(dfpedido, hide_index=True)
+                        df_selecionado = dfpedido[['desc_produto', 'quantidade']]
+                        st.dataframe(df_selecionado, hide_index=True)
                         st.session_state.num += 1
                     elif vl_quantidade == "":
                         dfpedido = pd.DataFrame(st.session_state.data)
                         dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
-                        st.dataframe(dfpedido, hide_index=True)
+                        df_selecionado = dfpedido[['desc_produto', 'quantidade']]
+                        st.dataframe(df_selecionado, hide_index=True)
                         st.session_state.num += 1                        
                else:
                    st.stop()
