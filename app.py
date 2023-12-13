@@ -60,7 +60,6 @@ if 'data' not in st.session_state:
 class NovoPedido:
     def __init__(self, page_id):
         idx_produto = page_id
-        idx_quantidade = 0
         self.produto = self.selecionaproduto(idx_produto)
         self.codigo = self.retorna_codigo(self.produto)
 
@@ -108,6 +107,11 @@ def main(loja):
             break
         else:
            with placeholder.form(key=str(num)):
+               num_linhas = len(dftab.index)
+               if num >= num_linhas:
+                   num = 0
+                   st.session_state.num = 0
+
                novo_produto = NovoPedido(page_id=num)
                vl_quantidade=st.text_input(label=f'****Quantidade****', value="")
                if st.form_submit_button('***Adicionar***'):
@@ -130,11 +134,9 @@ def main(loja):
                         st.dataframe(df_selecionado, hide_index=True)
                         st.session_state.num += 1
                     elif vl_quantidade == "":
-                        dfpedido = pd.DataFrame(st.session_state.data)
-                        dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
-                        df_selecionado = dfpedido[['desc_produto', 'quantidade']]
-                        st.dataframe(df_selecionado, hide_index=True)
-                        st.session_state.num += 1                        
+                        st.markdown(f"\t<h5 style='text-align: center; color: red;'># Item sem quantidade #</h5>", unsafe_allow_html=True)
+                        st.session_state.num += 1
+
                else:
                    st.stop()
                    
