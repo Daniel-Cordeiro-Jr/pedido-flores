@@ -6,6 +6,8 @@ import datetime as dt
 import psycopg2 as pg
 import datetime as dt
 from datetime import datetime
+from PIL import Image
+import os
 
 # Carregar o arquivo style.css
 with open ("style.css") as f:
@@ -44,7 +46,6 @@ def config_db():
     arquivo.close()
     return conteudo
 
-
 def exporta_pedido(dfpedido):
     # Cria uma conexão com o banco de dados PostgreSQL
     #strdb = config_db()
@@ -53,19 +54,45 @@ def exporta_pedido(dfpedido):
     # Faz a inserção dos dados no banco de dados PostgreSQL
     dfpedido.to_sql('tb_pedidos', con=engine, if_exists='append', index=False)
 
+def mostra_imagem(codigo):
+    # Diretório onde as imagens estão armazenadas
+    diretorio_imagens = "imagem"
+    # Lista de imagens no diretório
+    #imagens = os.listdir(diretorio_imagens)
+    # Abre a imagem selecionada
+    imagem = Image.open(os.path.join(diretorio_imagens, codigo + ".jpeg"))
+    # Mostra a imagem no Streamlit
+    st.image(imagem)
+
+def dt_pedido():
+    data_atual = dt.datetime.now()
+    # Dia da semana da próxima quarta-feira (2)
+    proxima_quarta = 2
+    # Dia da semana atual
+    hoje = data_atual.weekday()
+    # Calcular quantos dias até a próxima quarta-feira
+    dias_ate_quarta = (proxima_quarta - hoje + 7) % 7
+    # Se hoje já é quarta-feira, definir para a quarta-feira da próxima semana
+    if dias_ate_quarta == 0:
+        dias_ate_quarta += 7
+    # Calcular a data da quarta-feira da próxima semana
+    data_proxima_quarta = dt.datetime.today() + dt.timedelta(days=dias_ate_quarta)
+    # Formatar a data no formato 'dia/mês/ano'
+    data_formatada = data_proxima_quarta.strftime('%d-%m-%Y')
+    return data_formatada
+
 if 'num' not in st.session_state:
     st.session_state.num = 0
 if 'data' not in st.session_state:
     st.session_state.data = []
 class NovoPedido:
     def __init__(self, page_id):
-        idx_produto = page_id
-        self.produto = self.selecionaproduto(idx_produto)
+        self.produto = self.selecionaproduto(page_id)
         self.codigo = self.retorna_codigo(self.produto)
 
-    def selecionaproduto(self, idx_produto):
+    def selecionaproduto(self, page_id):
         produto = st.selectbox(f'****Produto:****', dftab['desc_produto'],
-                               index=idx_produto,
+                               index=page_id,
                                placeholder="Selecione o produto...")
         return produto
 
@@ -79,7 +106,7 @@ def main(loja):
     
     while True: 
         num = st.session_state.num
-        if placeholder2.button(f'***Enviar Pedido***', key=num):
+        if placeholder2.button(f'***Enviar Pedido***', key=str(num)):
             placeholder2.empty()
             dfpedido = pd.DataFrame(st.session_state.data)
             dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
@@ -91,16 +118,14 @@ def main(loja):
                 st.markdown(f"\t<h5 style='text-align: center; color: with;'># Data de entrega prevista para {entrega} #</h5>", unsafe_allow_html=True)
                 df_selecionado = dfpedido[['desc_produto', 'quantidade']]
                 st.dataframe(df_selecionado, hide_index=True)
-            elif data_atual > 0 and data_atual < 3:
+            
+            elif data_atual > 0 and data_atual <= 3:
                 # Calcular a data da próxima quarta-feira
-                dias_ate_quarta = ((2 - data_atual + 7) % 7) + 7
-                data_atual = dt.datetime.now()
-                proxima_quarta = (data_atual + dt.timedelta(days=dias_ate_quarta)).strftime('%d/%m/%Y')
+                proxima_quarta=dt_pedido()
                 st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
                 st.markdown(f"\t<h6 style='text-align: center; color: with;'># Entrega prevista para - {proxima_quarta} #</h6>", unsafe_allow_html=True)
                 df_selecionado = dfpedido[['desc_produto', 'quantidade']]
                 st.dataframe(df_selecionado, hide_index=True)
-
             exporta_pedido(dfpedido) 
             st.session_state.num = 1
             st.session_state.data = []         
@@ -111,8 +136,11 @@ def main(loja):
                if num >= num_linhas:
                    num = 0
                    st.session_state.num = 0
-
                novo_produto = NovoPedido(page_id=num)
+               submit_button = st.form_submit_button(label='Mostrar imagem do produto')
+               if submit_button:
+                   mostra_imagem(novo_produto.codigo)
+
                vl_quantidade=st.text_input(label=f'****Quantidade****', value="")
                if st.form_submit_button('***Adicionar***'):
                     if vl_quantidade != "":
@@ -136,7 +164,6 @@ def main(loja):
                     elif vl_quantidade == "":
                         st.markdown(f"\t<h5 style='text-align: center; color: red;'># Item sem quantidade #</h5>", unsafe_allow_html=True)
                         st.session_state.num += 1
-
                else:
                    st.stop()
                    
