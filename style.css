@@ -28,3 +28,16 @@
 
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
+
+#media{
+    font-size: 130px;
+    color: rgb(236, 241, 236);
+    display: flex;
+    margin-bottom: 0,5rem;
+    height: auto;
+    min-height: 1.5rem;
+    vertical-align: middle;
+    flex-direction: row;
+    -webkit-box-align: center;
+    align-items: center;
+}

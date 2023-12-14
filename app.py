@@ -139,8 +139,13 @@ def main(loja):
                novo_produto = NovoPedido(page_id=num)
                submit_button = st.form_submit_button(label='Mostrar imagem do produto')
                if submit_button:
-                   mostra_imagem(novo_produto.codigo)
-
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.write(' ')
+                    with col2:
+                        mostra_imagem(novo_produto.codigo)
+                    with col3:
+                        st.write(' ')
                vl_quantidade=st.text_input(label=f'****Quantidade****', value="")
                if st.form_submit_button('***Adicionar***'):
                     if vl_quantidade != "":
