@@ -9,6 +9,7 @@ from datetime import datetime
 from PIL import Image
 import os
 
+
 # Carregar o arquivo style.css
 with open ("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -80,6 +81,7 @@ def dt_pedido():
     # Formatar a data no formato 'dia/mês/ano'
     data_formatada = data_proxima_quarta.strftime('%d-%m-%Y')
     return data_formatada
+
 
 if 'num' not in st.session_state:
     st.session_state.num = 0
