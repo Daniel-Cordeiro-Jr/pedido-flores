@@ -142,7 +142,7 @@ def main(loja):
                    num = 0
                    st.session_state.num = 0
                novo_produto = NovoPedido(page_id=num)
-               submit_button = st.form_submit_button(label='Mostrar imagem do produto')
+               submit_button = st.form_submit_button(label='Imagem')
                if submit_button:
                     col1, col2, col3 = st.columns(3)
                     with col1:

@@ -1,7 +1,7 @@
 .stButton > button:first-child {
     background-color: #031d03;
     color: #ffffff;
-    border-color: rgb(247, 242, 242)
+    border-color: rgb(10, 49, 18)
 }
 
 /* Cor do texto para tela principal */
@@ -41,4 +41,3 @@ footer {visibility: hidden;}
     -webkit-box-align: center;
     align-items: center;
 }
-
