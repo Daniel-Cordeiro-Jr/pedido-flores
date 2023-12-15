@@ -57,8 +57,8 @@ def exporta_pedido(dfpedido):
 def mostra_imagem(codigo):
     # Diretório onde as imagens estão armazenadas
     diretorio_imagens = "imagem"
-    # Lista de imagens no diretório
-    #imagens = os.listdir(diretorio_imagens)
+    # Formata a imagem
+    st.markdown("""<style>img {border: 6px solid green;}</style>""", unsafe_allow_html=True)
     # Abre a imagem selecionada
     imagem = Image.open(os.path.join(diretorio_imagens, codigo + ".jpeg"))
     # Mostra a imagem no Streamlit
