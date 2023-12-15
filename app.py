@@ -5,7 +5,6 @@ import sqlalchemy as sa
 import datetime as dt
 import psycopg2 as pg
 import datetime as dt
-from datetime import datetime
 from PIL import Image
 import os
 
@@ -108,18 +107,21 @@ def main(loja):
     
     while True: 
         num = st.session_state.num
-        if placeholder2.button(f'***Enviar Pedido***', key=str(num)):
+        index=num+1
+        if placeholder2.button(f'***Enviar Pedido***', key=str(index)):
             placeholder2.empty()
             dfpedido = pd.DataFrame(st.session_state.data)
             dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
             st.markdown(f"\n")
-            data_atual=(datetime.today().weekday())
-            if data_atual == 0:
-                entrega=dt.datetime.now() + dt.timedelta(days=4)
+            data_atual = dt.date.today().weekday()
+            if data_atual in [0, 4, 5, 6]:
+                dias_ate_sexta = ((4 - data_atual) % 7) + 7
+                entrega=dt.date.today() + dt.timedelta(days=dias_ate_sexta)
                 st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
                 st.markdown(f"\t<h5 style='text-align: center; color: with;'># Data de entrega prevista para {entrega} #</h5>", unsafe_allow_html=True)
                 df_selecionado = dfpedido[['desc_produto', 'quantidade']]
                 st.dataframe(df_selecionado, hide_index=True)
+                break
             
             elif data_atual > 0 and data_atual <= 3:
                 # Calcular a data da próxima quarta-feira
@@ -128,10 +130,11 @@ def main(loja):
                 st.markdown(f"\t<h6 style='text-align: center; color: with;'># Entrega prevista para - {proxima_quarta} #</h6>", unsafe_allow_html=True)
                 df_selecionado = dfpedido[['desc_produto', 'quantidade']]
                 st.dataframe(df_selecionado, hide_index=True)
+                break
+            
             exporta_pedido(dfpedido) 
             st.session_state.num = 1
-            st.session_state.data = []         
-            break
+            st.session_state.data = []
         else:
            with placeholder.form(key=str(num)):
                num_linhas = len(dftab.index)
@@ -189,7 +192,7 @@ if loja:
         loja = None
         placeholder = st.empty()
         placeholder2 = st.empty()
-        st.session_state.num = 0
+        st.session_state.num = ""
         st.stop()
 
 
