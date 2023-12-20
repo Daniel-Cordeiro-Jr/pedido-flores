@@ -1,3 +1,5 @@
+#Versão completa
+
 import streamlit as st
 import pandas as pd
 from openpyxl import load_workbook
@@ -5,6 +7,7 @@ import sqlalchemy as sa
 import datetime as dt
 import psycopg2 as pg
 import datetime as dt
+from datetime import datetime
 from PIL import Image
 import os
 
@@ -53,34 +56,37 @@ def exporta_pedido(dfpedido):
     #engine = sa.create_engine(strdb)
     # Faz a inserção dos dados no banco de dados PostgreSQL
     dfpedido.to_sql('tb_pedidos', con=engine, if_exists='append', index=False)
+    # Exclui a seleção antiga.
+    st.session_state.data = []
+    st.session_state.num = 0
 
 def mostra_imagem(codigo):
     # Diretório onde as imagens estão armazenadas
     diretorio_imagens = "imagem"
-    # Formata a imagem
-    st.markdown("""<style>img {border: 6px solid green;}</style>""", unsafe_allow_html=True)
     # Abre a imagem selecionada
     imagem = Image.open(os.path.join(diretorio_imagens, codigo + ".jpeg"))
+    # Formatando imagem
+    st.markdown("""<style>img {border: 4px solid green;}</style>""", unsafe_allow_html=True)
     # Mostra a imagem no Streamlit
     st.image(imagem)
 
-def dt_pedido():
-    data_atual = dt.datetime.now()
-    # Dia da semana da próxima quarta-feira (2)
-    proxima_quarta = 2
-    # Dia da semana atual
-    hoje = data_atual.weekday()
-    # Calcular quantos dias até a próxima quarta-feira
-    dias_ate_quarta = (proxima_quarta - hoje + 7) % 7
-    # Se hoje já é quarta-feira, definir para a quarta-feira da próxima semana
-    if dias_ate_quarta == 0:
-        dias_ate_quarta += 7
-    # Calcular a data da quarta-feira da próxima semana
-    data_proxima_quarta = dt.datetime.today() + dt.timedelta(days=dias_ate_quarta)
-    # Formatar a data no formato 'dia/mês/ano'
-    data_formatada = data_proxima_quarta.strftime('%d-%m-%Y')
+def dt_pedido_quarta(data_atual):
+    # Calcular o número de dias até a próxima sexta-feira
+    dias_ate_quarta = (2 - data_atual.weekday() + 7) % 7
+    # Calcular a data da próxima sexta-feira
+    proxima_quarta = data_atual + dt.timedelta(days=dias_ate_quarta + 7)
+    # Formatar o objeto datetime para o formato desejado
+    data_formatada = proxima_quarta.strftime('%d-%m-%Y')
     return data_formatada
 
+def dt_pedido_sexta(data_atual):
+    # Calcular o número de dias até a próxima sexta-feira
+    dias_ate_sexta = (4 - data_atual.weekday() + 7) % 7
+    # Calcular a data da próxima sexta-feira
+    proxima_sexta = data_atual + dt.timedelta(days=dias_ate_sexta)
+    # Formatar o objeto datetime para o formato desejado
+    data_formatada = proxima_sexta.strftime('%d-%m-%Y')
+    return data_formatada
 
 if 'num' not in st.session_state:
     st.session_state.num = 0
@@ -96,53 +102,61 @@ class NovoPedido:
                                index=page_id,
                                placeholder="Selecione o produto...")
         return produto
-
     def retorna_codigo(self, selecao_prod):
         codigo = dftab.loc[dftab['desc_produto'] == selecao_prod, 'cod_produto'].values[0]
         return codigo
-
 def main(loja):
     placeholder = st.empty()
     placeholder2 = st.empty()
-    
     while True: 
         num = st.session_state.num
-        index=num+1
-        if placeholder2.button(f'***Enviar Pedido***', key=str(index)):
+        if placeholder2.button(f'***Enviar Pedido***', key=str(num)):
             placeholder2.empty()
             dfpedido = pd.DataFrame(st.session_state.data)
             dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
             st.markdown(f"\n")
-            data_atual = dt.date.today().weekday()
-            if data_atual in [0, 4, 5, 6]:
-                dias_ate_sexta = ((4 - data_atual) % 7) + 7
-                entrega=dt.date.today() + dt.timedelta(days=dias_ate_sexta)
-                st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
-                st.markdown(f"\t<h5 style='text-align: center; color: with;'># Data de entrega prevista para {entrega} #</h5>", unsafe_allow_html=True)
-                df_selecionado = dfpedido[['desc_produto', 'quantidade']]
-                st.dataframe(df_selecionado, hide_index=True)
-                break
-            
-            elif data_atual > 0 and data_atual <= 3:
-                # Calcular a data da próxima quarta-feira
-                proxima_quarta=dt_pedido()
-                st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
-                st.markdown(f"\t<h6 style='text-align: center; color: with;'># Entrega prevista para - {proxima_quarta} #</h6>", unsafe_allow_html=True)
-                df_selecionado = dfpedido[['desc_produto', 'quantidade']]
-                st.dataframe(df_selecionado, hide_index=True)
-                break
-            
-            exporta_pedido(dfpedido) 
-            st.session_state.num = 1
-            st.session_state.data = []
+            data_atual = datetime.today()
+            hoje = datetime.today().weekday()
+            if len(dfpedido.index) != 0 and hoje in [0, 4, 5, 6]:
+                    # Calcular a data da próxima sext-feira
+                    proxima_sexta=dt_pedido_sexta(data_atual)
+                    st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
+                    st.markdown(f"\t<h5 style='text-align: center; color: with;'># Entrega prevista para {proxima_sexta} #</h5>", unsafe_allow_html=True)
+                    df_selecionado = dfpedido[['desc_produto', 'quantidade']]
+                    st.dataframe(df_selecionado, hide_index=True)
+                    exporta_pedido(dfpedido)
+                    break           
+            elif len(dfpedido.index) != 0 and hoje in [1, 2, 3]:
+                    # Calcular a data da próxima quarta-feira
+                    proxima_quarta=dt_pedido_quarta(data_atual)
+                    st.markdown(f"\t<h3 style='text-align: center; color: with;'># Pedido #</h3>", unsafe_allow_html=True)
+                    st.markdown(f"\t<h6 style='text-align: center; color: with;'># Entrega prevista para - {proxima_quarta} #</h6>", unsafe_allow_html=True)    
+                    df_selecionado = dfpedido[['desc_produto', 'quantidade']]
+                    st.dataframe(df_selecionado, hide_index=True)
+                    exporta_pedido(dfpedido) 
+                    break
+              
         else:
            with placeholder.form(key=str(num)):
-               num_linhas = len(dftab.index)
-               if num >= num_linhas:
-                   num = 0
+               dfpedido = pd.DataFrame(st.session_state.data)
+               num_itens = len(dftab.index)
+               num_pedido = len(dfpedido.index)
+
+               if num >= num_itens and num_pedido == 0:
+                   st.markdown(f"\t<h8 style='text-align: center; color: black;'># Nenhum produto selecionado, para continuar selecione um produto #</h8>", unsafe_allow_html=True)              
+                   dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                   dfpedido = pd.DataFrame(st.session_state.data)              
                    st.session_state.num = 0
+                   num = 0
+               elif num <= num_itens and num_pedido >= num_itens:
+                   st.markdown(f"\t<h8 style='text-align: center; color: black;'># Não há mais produtos para seleção, para continuar precione ENVIAR PEDIDO #</h8>", unsafe_allow_html=True)              
+                   dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                   dfpedido = pd.DataFrame(st.session_state.data)
+                   st.session_state.num = 0
+                   num = 0                   
+
                novo_produto = NovoPedido(page_id=num)
-               submit_button = st.form_submit_button(label='Imagem')
+               submit_button = st.form_submit_button(label='Imagem do produto')
                if submit_button:
                     col1, col2, col3 = st.columns(3)
                     with col1:
@@ -167,13 +181,17 @@ def main(loja):
                         dfpedido = pd.DataFrame(st.session_state.data)
                         dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
                         st.markdown(f"\n")                     
-                        st.markdown(f"\t<h5 style='text-align: center; color: with;'># Itens Selecionados #</h5>", unsafe_allow_html=True)
                         df_selecionado = dfpedido[['desc_produto', 'quantidade']]
+                        st.markdown(f"\t<h5 style='text-align: center; color: black;'># Produto Selecionado #</h5>", unsafe_allow_html=True)
                         st.dataframe(df_selecionado, hide_index=True)
-                        st.session_state.num += 1
+                        st.session_state.num += 1                
                     elif vl_quantidade == "":
-                        st.markdown(f"\t<h5 style='text-align: center; color: red;'># Item sem quantidade #</h5>", unsafe_allow_html=True)
+                        st.markdown(f"\t<h8 style='text-align: center; color: black;'># Necessário inserir a quantidade #</h8>", unsafe_allow_html=True)
                         st.session_state.num += 1
+                        dfpedido = pd.DataFrame(st.session_state.data)
+                        if len(dfpedido.index) != 0:
+                            df_selecionado = dfpedido[['desc_produto', 'quantidade']]
+                            st.dataframe(df_selecionado, hide_index=True)
                else:
                    st.stop()
                    
@@ -184,15 +202,16 @@ def selecionaloja():
                                index = None, 
                                placeholder=mensagem)
     return selected_option
-
 loja = selecionaloja()
 if loja:
     main(loja)
     if st.button('Novo Pedido'):        
         loja = None
+        page_id=0
         placeholder = st.empty()
         placeholder2 = st.empty()
-        st.session_state.num = ""
-        st.stop()
+        st.session_state.num = 0
+        st.session_state.data = []        
+        st.rerun()
 
 
