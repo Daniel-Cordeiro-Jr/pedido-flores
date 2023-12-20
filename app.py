@@ -147,7 +147,7 @@ def main(loja):
                    dfpedido = pd.DataFrame(st.session_state.data)              
                    st.session_state.num = 0
                    num = 0
-               elif num <= num_itens and num_pedido > 0:
+               elif num >= num_itens and num_pedido > 0:
                    st.markdown(f"\t<h8 style='text-align: center; color: black;'># Não há mais produtos para seleção, para continuar precione ENVIAR PEDIDO #</h8>", unsafe_allow_html=True)              
                    dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
                    dfpedido = pd.DataFrame(st.session_state.data)
