@@ -183,7 +183,12 @@ def main(loja):
                         df_selecionado = dfpedido[['desc_produto', 'quantidade']]
                         st.markdown(f"\t<h5 style='text-align: center; color: black;'># Produto Selecionado #</h5>", unsafe_allow_html=True)
                         st.dataframe(df_selecionado, hide_index=True)
-                        st.session_state.num += 1                
+                        novo_produto.produto
+                        indice = dftab.loc[dftab['desc_produto'] == novo_produto.produto].index[0]
+                        indice
+                        dftab
+                        st.session_state.num += 1    
+                        st.session_state.num
                     elif vl_quantidade == "":
                         st.markdown(f"\t<h8 style='text-align: center; color: black;'># Necessário inserir a quantidade #</h8>", unsafe_allow_html=True)
                         st.session_state.num += 1
