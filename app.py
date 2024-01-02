@@ -170,7 +170,7 @@ def main(loja):
                         st.session_state.num += 1
                     elif vl_quantidade == "":
                         st.markdown(f"\t<h8 style='text-align: center; color: black;'># Necessário inserir a quantidade #</h8>", unsafe_allow_html=True)
-                        #st.session_state.num += 1
+                        st.session_state.num += 1
                         dfpedido = pd.DataFrame(st.session_state.data)
                         if len(dfpedido.index) != 0:
                             dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
