@@ -28,7 +28,7 @@ dftabloja = dftabloja.astype({'numero': 'str', 'loja': 'str'})
 
 def mostra_imagem(codigo):
     # Diretório onde as imagens estão armazenadas
-    diretorio_imagens = "imagem"
+    diretorio_imagens = "Imagens"
     # Abre a imagem selecionada
     imagem = Image.open(os.path.join(diretorio_imagens, codigo + ".jpeg"))
     # Formatando imagem
