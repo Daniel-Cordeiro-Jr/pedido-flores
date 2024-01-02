@@ -4,3 +4,5 @@ streamlit==1.28.2
 sqlalchemy==1.4.39
 psycopg2==2.9.9
 python-dotenv
+requirements.txt
+contextlib
