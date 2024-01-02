@@ -1,6 +1,5 @@
 .devcontainer
 .streamlit
-.env
 .pedido_loja.csv
 REDME.md
 bkp
