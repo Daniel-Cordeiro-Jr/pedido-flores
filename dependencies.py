@@ -47,30 +47,3 @@ def insere_registros(dfpedido):
             st.markdown(f"Pedido gravado e enviado com sucesso!")    
     except (Exception, psycopg2.DatabaseError) as error:
         st.markdown(f"Erro ao inserir registros: {str(error)}")
-
-def consulta_loja(loja):
-    with instance_cursor() as cursor:
-        query = """ 
-        SELECT desc_loja 
-        FROM tb_pedidos
-        WHERE TRIM(desc_loja) = %s
-        dt_pedido = CURRENT_DATE
-        """
-        cursor.execute(query, (loja, ))
-        result = cursor.fetchall()
-        return result
-    
-def consulta_status_pedido(loja):
-    with instance_cursor() as cursor:
-        query = """ 
-        SELECT EXTRACT(DAY FROM dt_entrega) AS Dia
-        FROM tb_pedidos
-        WHERE TRIM(desc_loja) = %s
-        """
-        cursor.execute(query, (loja, ))
-        result = cursor.fetchall()
-        if result >= 7:
-            status_pedido = 'open'
-        else:
-            status_pedido = 'closed'
-        return status_pedido

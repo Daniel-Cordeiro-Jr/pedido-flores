@@ -8,7 +8,7 @@ import datetime as dt
 from datetime import datetime
 from PIL import Image
 import os
-from dependencies import insere_registros, consulta_loja
+from dependencies import insere_registros
 
 # Carregar o arquivo style.css
 with open ("style.css") as f:
