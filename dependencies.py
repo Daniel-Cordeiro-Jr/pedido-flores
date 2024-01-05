@@ -44,6 +44,31 @@ def insere_registros(dfpedido):
         if (connection):
             cursor.close()
             connection.close()
-            st.markdown(f"Pedido gravado e enviado com sucesso!")    
+            st.markdown(f"\t<h6 style='text-align: CENTER; color: with;'># Pedido gravado e enviado com sucesso! #</h6>", unsafe_allow_html=True)  
     except (Exception, psycopg2.DatabaseError) as error:
         st.markdown(f"Erro ao inserir registros: {str(error)}")
+
+
+def consulta_loja():
+    with instance_cursor() as cursor:
+        query = """ 
+            select loja, tabela 
+            from tb_produtos_loja
+            order by 1;
+            """
+        #st.markdown(f"{query}")
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
+    
+def consulta_produto(tabela):
+    with instance_cursor() as cursor:
+        query = f""" 
+            select cod_produto, desc_produto 
+            from tb_produtos
+            where {tabela} = 1;
+            """
+        #st.markdown(f"{query}")
+        cursor.execute(query)
+        produtos = cursor.fetchall()
+        return produtos
