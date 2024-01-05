@@ -40,7 +40,6 @@ def insere_registros(dfpedido):
         for index, row in dfpedido.iterrows():
             cursor.execute(query, (row['nun_loja'], row['desc_loja'], row['dt_pedido'],row['cod_produto'], row['desc_produto'], row['quantidade'], row['dt_entrega']))
             connection.commit()
-
         if (connection):
             cursor.close()
             connection.close()
@@ -56,7 +55,6 @@ def consulta_loja():
             from tb_produtos_loja
             order by 1;
             """
-        #st.markdown(f"{query}")
         cursor.execute(query)
         result = cursor.fetchall()
         return result
@@ -68,7 +66,6 @@ def consulta_produto(tabela):
             from tb_produtos
             where {tabela} = 1;
             """
-        #st.markdown(f"{query}")
         cursor.execute(query)
         produtos = cursor.fetchall()
         return produtos
