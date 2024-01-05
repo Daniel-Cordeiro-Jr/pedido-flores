@@ -14,7 +14,7 @@ PORT = int(os.getenv("PORT"))
 
 @contextmanager
 def instance_cursor():
-    connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=PORT)
+    connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=5432)
     cursor = connection.cursor()
     try:
         yield cursor
