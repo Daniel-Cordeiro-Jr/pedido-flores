@@ -25,7 +25,7 @@ def instance_cursor():
 
 def insere_registros(dfpedido):
     try:
-        connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=5432)
+        connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=PORT)
         cursor = connection.cursor()
         query = """
         INSERT INTO tb_pedidos(nun_loja, 
