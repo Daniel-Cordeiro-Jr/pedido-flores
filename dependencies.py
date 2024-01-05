@@ -25,7 +25,7 @@ def instance_cursor():
 
 def insere_registros(dfpedido):
     try:
-        connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=PORT)
+        connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=5432)
         cursor = connection.cursor()
         query = """
         INSERT INTO tb_pedidos(nun_loja, 
@@ -50,7 +50,7 @@ def insere_registros(dfpedido):
 
 @contextmanager
 def consulta_loja():
-    connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=PORT)
+    connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=5432)
     cursor = connection.cursor()
     with instance_cursor() as cursor:
         query = """ 
@@ -65,7 +65,7 @@ def consulta_loja():
 
 @contextmanager
 def consulta_produto(tabela):
-    connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=PORT)
+    connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=5432)
     cursor = connection.cursor()
     with instance_cursor() as cursor:
         query = f""" 
