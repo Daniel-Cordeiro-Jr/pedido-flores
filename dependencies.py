@@ -48,7 +48,7 @@ def insere_registros(dfpedido):
         st.markdown(f"Erro ao inserir registros: {str(error)}")
 
 
-
+@contextmanager
 def consulta_loja():
     connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=PORT)
     cursor = connection.cursor()
@@ -62,7 +62,8 @@ def consulta_loja():
         result = cursor.fetchall()
         return result
 
-    
+
+@contextmanager
 def consulta_produto(tabela):
     connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=PORT)
     cursor = connection.cursor()
