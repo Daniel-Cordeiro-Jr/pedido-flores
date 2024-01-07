@@ -48,13 +48,27 @@ def insere_registros(dfpedido):
         st.markdown(f"Erro ao inserir registros: {str(error)}")
 
 
-def consulta_loja():
+def consulta_rede():
     connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=5432)
     cursor = connection.cursor()
     with instance_cursor() as cursor:
         query = """ 
-            select loja, tabela 
-            from tb_produtos_loja
+            select rede from tb_rede_tabela
+            order by 1;
+            """
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
+
+def consulta_loja(rede):
+    connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=5432)
+    cursor = connection.cursor()
+    with instance_cursor() as cursor:
+        query = f""" 
+            select pl.loja, pl.tabela 
+            from tb_produtos_loja pl, tb_rede_tabela rt
+            where rt.rede = '{rede}'
+            and pl.tabela=rt.tabela
             order by 1;
             """
         cursor.execute(query)

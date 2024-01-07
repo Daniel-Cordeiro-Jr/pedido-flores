@@ -8,7 +8,7 @@ import datetime as dt
 from datetime import datetime
 from PIL import Image
 import os
-from dependencies import insere_registros, consulta_loja, consulta_produto
+from dependencies import insere_registros, consulta_loja, consulta_produto, consulta_rede
 
 # Carregar o arquivo style.css
 with open ("style.css") as f:
@@ -17,10 +17,6 @@ with open ("style.css") as f:
 # Carrega a imagem do logo
 st.image('logo.jpeg', use_column_width = True)
 
-
-# Carrega a tabela Loja
-loja=consulta_loja()
-dftabloja = pd.DataFrame(loja, columns = ['LOJA', 'TABELA'])
 
 def mostra_imagem(codigo):
     # Diretório onde as imagens estão armazenadas
@@ -32,9 +28,22 @@ def mostra_imagem(codigo):
     # Mostra a imagem no Streamlit
     st.image(imagem)
 
-def selecionaloja():
+def selecionarede():
+# Carrega a tabela Redes
+    rede=consulta_rede()
+    dftabrede = pd.DataFrame(rede, columns = ['REDE'])
 #Selecionar a Loja
-    dftabloja = pd.DataFrame(loja, columns = ['LOJA', 'TABELA'])
+    mensagem = "Selecione a Loja..."
+    selected_option = st.selectbox(f'****Rede:****', dftabrede['REDE'],
+                               index = None, 
+                               placeholder=mensagem)
+    if selected_option == None:
+        st.stop()
+    else:
+        return selected_option
+
+def selecionaloja(rede):
+#Selecionar a Loja
     mensagem = "Selecione a Loja..."
     selected_option = st.selectbox(f'****Loja:****', dftabloja['LOJA'],
                                index = None, 
@@ -43,7 +52,6 @@ def selecionaloja():
         st.stop()
     else:
         tabela = dftabloja.loc[dftabloja['LOJA'] == selected_option, 'TABELA'].iat[0]
-
     return selected_option, tabela
 
 def dt_pedido_quarta(data_atual):
@@ -190,14 +198,19 @@ def main(loja, tabela):
                else:
                    st.stop()   
 
-loja, tabela = selecionaloja()
-if loja:
-    main(loja, tabela)
-    if st.button('Novo Pedido'):        
-        loja = None
-        page_id=0
-        placeholder = st.empty()
-        placeholder2 = st.empty()
-        st.session_state.num = 0
-        st.session_state.data = []        
-        st.rerun()
+rede=selecionarede()
+# Carrega a tabela Loja
+loja=consulta_loja(rede)
+dftabloja = pd.DataFrame(loja, columns = ['LOJA', 'TABELA'])
+if rede:
+    loja, tabela=selecionaloja(rede)
+    if loja:
+        main(loja, tabela)
+        if st.button('Novo Pedido'):        
+            loja = None
+            page_id=0
+            placeholder = st.empty()
+            placeholder2 = st.empty()
+            st.session_state.num = 0
+            st.session_state.data = []        
+            st.rerun()
