@@ -83,7 +83,8 @@ def consulta_produto(tabela):
         query = f""" 
             select cod_produto, desc_produto 
             from tb_produtos
-            where {tabela} = 1;
+            where {tabela} = 1
+            order by 1;
             """
         cursor.execute(query)
         produtos = cursor.fetchall()
