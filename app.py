@@ -15,7 +15,15 @@ with open ("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Carrega a imagem do logo
-st.image('logo.jpeg', use_column_width = True)
+#st.image('logo.jpeg', use_column_width = True)
+    # Diretório onde as imagens estão armazenadas
+    diretorio_imagens = "Imagens"
+    # Abre a imagem selecionada
+    imagem = Image.open(os.path.join(diretorio_imagens, "logo.jpeg"))
+    # Formatando imagem
+    st.markdown("""<style>img {border: 2px solid green;}</style>""", unsafe_allow_html=True)
+    # Mostra a imagem no Streamlit
+    st.image(imagem)
 
 
 def mostra_imagem(codigo):
