@@ -47,7 +47,6 @@ def insere_registros(dfpedido):
     except (Exception, psycopg2.DatabaseError) as error:
         st.markdown(f"Erro ao inserir registros: {str(error)}")
 
-
 def consulta_rede():
     connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=5432)
     cursor = connection.cursor()
@@ -74,7 +73,6 @@ def consulta_loja(rede):
         cursor.execute(query)
         result = cursor.fetchall()
         return result
-
 
 def consulta_produto(tabela):
     connection = psycopg2.connect(database=DATABAE, user=USERSERVER, password=PASSWORD, host=HOST, port=5432)

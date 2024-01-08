@@ -148,13 +148,15 @@ def main(loja, tabela):
                num_pedido = len(dfpedido.index)
                if num >= num_itens and num_pedido == 0:
                    st.markdown(f"\t<h8 style='text-align: center; color: red;'># Nenhum produto selecionado, para continuar selecione um produto #</h8>", unsafe_allow_html=True)              
-                   dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                   #dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                   dfpedido = dfpedido.drop_duplicates(subset=['cod_produto','nun_loja'], keep='last')
                    dfpedido = pd.DataFrame(st.session_state.data)              
                    st.session_state.num = 0
                    num = 0
                elif num >= num_itens and num_pedido > 0:
                    st.markdown(f"\t<h8 style='text-align: center; color: red;'># Não há mais produtos para seleção, para continuar precione ENVIAR PEDIDO #</h8>", unsafe_allow_html=True)              
-                   dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                   #dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                   dfpedido = dfpedido.drop_duplicates(subset=['cod_produto','nun_loja'], keep='last')
                    dfpedido = pd.DataFrame(st.session_state.data)
                    num = 0           
                novo_produto = NovoPedido(page_id=num, tabela=tabela, dftab=dftab)
@@ -181,9 +183,11 @@ def main(loja, tabela):
                         'quantidade': vl_quantidade
                         })
                         dfpedido = pd.DataFrame(st.session_state.data)
-                        dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
-                        st.markdown(f"\n")                     
+                        #dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                        dfpedido = dfpedido.drop_duplicates(subset=['cod_produto','nun_loja'], keep='last')
+                        st.markdown(f"\n")                 
                         df_selecionado = dfpedido[['desc_produto', 'quantidade']]
+                        df_selecionado = df_selecionado.sort_values(by=['desc_produto'])
                         st.markdown(f"\t<h5 style='text-align: center; color: with;'># Produto Selecionado #</h5>", unsafe_allow_html=True)
                         st.dataframe(df_selecionado, hide_index=True)
                         st.session_state.num += 1
@@ -192,7 +196,8 @@ def main(loja, tabela):
                         st.session_state.num += 1
                         dfpedido = pd.DataFrame(st.session_state.data)
                         if len(dfpedido.index) != 0:
-                            dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                            #dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                            dfpedido = dfpedido.drop_duplicates(subset=['cod_produto','nun_loja'], keep='last')
                             df_selecionado = dfpedido[['desc_produto', 'quantidade']]
                             st.dataframe(df_selecionado, hide_index=True)
                else:
