@@ -1,3 +1,6 @@
+#Versão com tabelas sem Excel.
+
+
 import streamlit as st
 import pandas as pd
 from openpyxl import load_workbook
@@ -8,50 +11,37 @@ import datetime as dt
 from datetime import datetime
 from PIL import Image
 import os
-from dependencies import insere_registros, consulta_loja, consulta_produto, consulta_rede
+from dependencies import insere_registros, consulta_loja, consulta_produto
 
 # Carregar o arquivo style.css
 with open ("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Carrega a imagem do logo
-#st.image('logo.jpeg', use_column_width = True)
-    # Diretório onde as imagens estão armazenadas
-    diretorio_imagens = "Imagens"
-    # Abre a imagem selecionada
-    imagem = Image.open(os.path.join(diretorio_imagens, "logo.jpeg"))
-    # Formatando imagem
-    st.markdown("""<style>img {border: 2px solid green;}</style>""", unsafe_allow_html=True)
-    # Mostra a imagem no Streamlit
-    st.image(imagem)
+st.image('logo.jpeg', use_column_width = True)
 
+
+# Carrega a tabela Loja
+loja=consulta_loja()
+dftabloja = pd.DataFrame(loja, columns = ['LOJA', 'TABELA'])
 
 def mostra_imagem(codigo):
     # Diretório onde as imagens estão armazenadas
     diretorio_imagens = "Imagens"
     # Abre a imagem selecionada
-    imagem = Image.open(os.path.join(diretorio_imagens, str(codigo) + ".jpeg"))
-    # Formatando imagem
-    st.markdown("""<style>img {border: 4px solid green;}</style>""", unsafe_allow_html=True)
-    # Mostra a imagem no Streamlit
-    st.image(imagem)
+    #imagem = Image.open(os.path.join(diretorio_imagens, str(codigo) + ".jpeg"))
+    try:
+        imagem = Image.open(os.path.join(diretorio_imagens, str(codigo) + ".jpeg"))
+        # Formatando imagem
+        st.markdown("""<style>img {border: 4px solid green;}</style>""", unsafe_allow_html=True)
+        # Mostra a imagem no Streamlit
+        st.image(imagem)
+    except IOError:
+        st.markdown(f"\t<h5 style='text-align: center; color: with;'># Imagem não disponível! #</h5>", unsafe_allow_html=True)
 
-def selecionarede():
-# Carrega a tabela Redes
-    rede=consulta_rede()
-    dftabrede = pd.DataFrame(rede, columns = ['REDE'])
+def selecionaloja():
 #Selecionar a Loja
-    mensagem = "Selecione a Loja..."
-    selected_option = st.selectbox(f'****Rede:****', dftabrede['REDE'],
-                               index = None, 
-                               placeholder=mensagem)
-    if selected_option == None:
-        st.stop()
-    else:
-        return selected_option
-
-def selecionaloja(rede):
-#Selecionar a Loja
+    dftabloja = pd.DataFrame(loja, columns = ['LOJA', 'TABELA'])
     mensagem = "Selecione a Loja..."
     selected_option = st.selectbox(f'****Loja:****', dftabloja['LOJA'],
                                index = None, 
@@ -60,6 +50,7 @@ def selecionaloja(rede):
         st.stop()
     else:
         tabela = dftabloja.loc[dftabloja['LOJA'] == selected_option, 'TABELA'].iat[0]
+
     return selected_option, tabela
 
 def dt_pedido_quarta(data_atual):
@@ -115,7 +106,10 @@ def main(loja, tabela):
         if placeholder2.button(f'***Enviar Pedido***', key=str(num)):
             placeholder2.empty()
             dfpedido = pd.DataFrame(st.session_state.data)
-            dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+            dfpedido = dfpedido.drop_duplicates(subset=['cod_produto','nun_loja'], keep='last')
+            if dfpedido.empty:
+                st.markdown(f"\t<h6 style='text-align: center; color: with;'># O pedido não possui itens selecionados! #</h6>", unsafe_allow_html=True)
+                break
             st.markdown(f"\n")
             data_atual = datetime.today()
             hoje = datetime.today().weekday()
@@ -155,15 +149,13 @@ def main(loja, tabela):
                num_itens = len(dftab.index)
                num_pedido = len(dfpedido.index)
                if num >= num_itens and num_pedido == 0:
-                   st.markdown(f"\t<h8 style='text-align: center; color: red;'># Nenhum produto selecionado, para continuar selecione um produto #</h8>", unsafe_allow_html=True)              
-                   #dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                   st.markdown(f"\t<h8 style='text-align: center; color: red;'># Nenhum produto selecionado, para continuar selecione um produto #</h8>", unsafe_allow_html=True)
                    dfpedido = dfpedido.drop_duplicates(subset=['cod_produto','nun_loja'], keep='last')
                    dfpedido = pd.DataFrame(st.session_state.data)              
                    st.session_state.num = 0
                    num = 0
                elif num >= num_itens and num_pedido > 0:
-                   st.markdown(f"\t<h8 style='text-align: center; color: red;'># Não há mais produtos para seleção, para continuar precione ENVIAR PEDIDO #</h8>", unsafe_allow_html=True)              
-                   #dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
+                   st.markdown(f"\t<h8 style='text-align: center; color: red;'># Não há mais produtos para seleção, para continuar precione ENVIAR PEDIDO #</h8>", unsafe_allow_html=True)
                    dfpedido = dfpedido.drop_duplicates(subset=['cod_produto','nun_loja'], keep='last')
                    dfpedido = pd.DataFrame(st.session_state.data)
                    num = 0           
@@ -191,39 +183,31 @@ def main(loja, tabela):
                         'quantidade': vl_quantidade
                         })
                         dfpedido = pd.DataFrame(st.session_state.data)
-                        #dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
                         dfpedido = dfpedido.drop_duplicates(subset=['cod_produto','nun_loja'], keep='last')
-                        st.markdown(f"\n")                 
+                        st.markdown(f"\n")                     
                         df_selecionado = dfpedido[['desc_produto', 'quantidade']]
-                        df_selecionado = df_selecionado.sort_values(by=['desc_produto'])
                         st.markdown(f"\t<h5 style='text-align: center; color: with;'># Produto Selecionado #</h5>", unsafe_allow_html=True)
                         st.dataframe(df_selecionado, hide_index=True)
                         st.session_state.num += 1
                     elif vl_quantidade == "":
-                        st.markdown(f"\t<h8 style='text-align: center; color: red;'># Necessário inserir a quantidade #</h8>", unsafe_allow_html=True)
+                        st.markdown(f"\t<h8 style='text-align: center; color: with;'># Necessário inserir uma quantidade #</h8>", unsafe_allow_html=True)
                         st.session_state.num += 1
                         dfpedido = pd.DataFrame(st.session_state.data)
                         if len(dfpedido.index) != 0:
-                            #dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
-                            dfpedido = dfpedido.drop_duplicates(subset=['cod_produto','nun_loja'], keep='last')
+                            dfpedido = dfpedido.drop_duplicates(subset='cod_produto').reset_index(drop=True)
                             df_selecionado = dfpedido[['desc_produto', 'quantidade']]
                             st.dataframe(df_selecionado, hide_index=True)
                else:
                    st.stop()   
 
-rede=selecionarede()
-# Carrega a tabela Loja
-loja=consulta_loja(rede)
-dftabloja = pd.DataFrame(loja, columns = ['LOJA', 'TABELA'])
-if rede:
-    loja, tabela=selecionaloja(rede)
-    if loja:
-        main(loja, tabela)
-        if st.button('Novo Pedido'):        
-            loja = None
-            page_id=0
-            placeholder = st.empty()
-            placeholder2 = st.empty()
-            st.session_state.num = 0
-            st.session_state.data = []        
-            st.rerun()
+loja, tabela = selecionaloja()
+if loja:
+    main(loja, tabela)
+    if st.button('Novo Pedido'):        
+        loja = None
+        page_id=0
+        placeholder = st.empty()
+        placeholder2 = st.empty()
+        st.session_state.num = 0
+        st.session_state.data = []        
+        st.rerun()
