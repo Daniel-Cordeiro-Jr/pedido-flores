@@ -54,7 +54,7 @@ def consulta_loja():
         query = f""" 
             select pl.loja, pl.tabela 
             from tb_produtos_loja pl, tb_rede_tabela rt
-            where rt.rede = 'HORTIFRUTI'
+            where rt.rede = 'PREZUNIC'
             and pl.tabela=rt.tabela
             order by 1;
             """
